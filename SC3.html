@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<script   src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	</head>
+		<body>
+		<h1>Shopping Cart</h1>
+
+		<div>
+			<ul>
+				<li><a class="add-to-cart" href = "a" data-name="Coconut Chocolate Pie" data-price="1.22">
+				Coconut Chocolate Pie 3.50</a></li>
+				<li><a class="add-to-cart" href = "a" data-name="Banana Cream Pie" data-price="1.22">Banana Cream Pie 3.50</a></li>
+				<li><a class="add-to-cart" href = "a" data-name="Cheesecake" data-price="1.22">Cheesecake 4.00</a></li>
+				<li><a class="add-to-cart" href = "a" data-name="Bostom Cream Cupcake" data-price="4.50">Bostom Cream Cupcake 5.22</a></li>
+				
+			</ul>
+			<button id ="clear-cart">Clear Cart</button>
+		</div>
+
+		<div>
+			<ul id="show-cart">
+			<li>????????????</li>
+				
+
+			</ul>
+			<div>Total Cart: $<span id="total-cart"></span>
+			</div>
+		</div>
+		<script>
+
+		
+		//use jquery that jquery will add a click funciton, whenever you click, it will do the function
+			$(".add-to-cart").click(function(event){
+				event.preventDefault();
+				//prevent default, prevents the link from doing its default behavior
+				var name = $(this).attr("data-name");
+				//this represents the link you clicked on, .attr aloows us to access one of the attributes
+				var price = Number($(this).attr("data-price"));
+				//convert value to a number
+				//this will represent the link that you clicked on 
+				addItemToCart(name, price, 1);
+				displayCart();
+				//every time you ads an item, display the cart
+			});
+
+			$("#clear-cart").click(function(event){
+				clearCart();
+				displayCart();
+
+			});
+
+			function displayCart() {
+				console.log("*** Display Cart***");
+
+				var cartArray = listCart();
+				console.log("****Count Cart  : " + cartArray.length);
+				var output = "";
+
+				for (var i in cartArray){
+					output += "<li>"+cartArray[i].name +  " "+ cartArray[i].count+" x "+cartArray[i].price
+					+" = " + cartArray[i].total+"</li>"
+					//+=appends items
+					//create a list of items for each item in the cart array
+					
+				}
+				
+				$("#show-cart").html(output);
+				$("#total-cart").html(totalCart());
+				//replace the html of that element with output
+				//use # bc its an id, set html and override everything in shCart Element
+
+			}
+			var message = "Hello World";
+			var someText= "<h1>"+ message;
+			someText+= "</h1>";
+			var anotherText = "<p>"+message+"</p>"
+			console.log(someText);
+			console.log(anotherText);
+		var cart = [];
+
+		var Item = function(name, price, count) {
+			this.name = name
+			this.price = price
+			this.count = count
+		};
+
+		function addItemToCart(name, price, count) {
+			for (var i in cart){ 
+					if (cart[i].name === name) {
+						cart[i].count+=count;
+						saveCart();
+						return;
+					}
+			}
+
+			var item = new Item(name, price, count);
+			cart.push(item);
+			saveCart();
+		}
+
+		
+
+		console.log(cart);
+		console.log(cart[0] );
+		console.log(cart[0]);
+
+		function removeItemFromCart(name, count) {
+			for (var i in cart) {
+				if(cart[i].name === name){
+					cart[i].count --;
+					if (cart[i].count === 0) {
+						cart.splice(i, 1);
+						//splice to add or remove take item away the item not there if none left
+					} 
+					break;
+				}
+
+			}
+				saveCart();
+		}
+		
+
+		function removeItemFromCartAll(name) {
+			for (var i in cart) {
+				if (cart[i].name===name) {
+					cart.splice(i, 1);
+					break;
+				}
+			}
+			saveCart();
+		}
+
+		function clearCart() {
+			cart = [];
+			saveCart();
+		}
+	
+		function countCart() {
+			var toalCount = 0;
+			for (var i in cart){
+				toalCount += cart[i].count;
+			}
+			return toalCount;
+		}
+		console.log( countCart());
+		//-> return total count
+
+		function totalCart() {
+			var totalCost = 0;
+			for (var i in cart) {
+				totalCost += cart[i].price * cart[i].count;
+
+			}
+			return totalCost.toFixed(2);
+			//turn it into a string with 2 decimal places
+		}
+			//console.log(totalCart());
+
+
+		function listCart() {
+			var cartCopy = [];
+			for (var i in cart) {
+				var item = cart[i];
+				var itemCopy = {};
+				for (var p in item) {
+					itemCopy[p] = item[p]
+					//loops through name price and count
+				}
+				itemCopy.total = (item.price * item.count).toFixed();
+				//find price of each type of item
+				cartCopy.push(itemCopy);
+			}
+			//return cartCopy;
+			return cartCopy;
+		}
+
+		function saveCart() {
+			localStorage.setItem("shoppingCart", JSON.stringify(cart));
+			//JS object notation converts to a string
+		}
+
+		function loadCart() {
+			cart = JSON.parse(localStorage.getItem("shoppingCart"));
+		}
+
+			loadCart();
+			//load cart gets teh cart we saved to local storage
+			displayCart();
+
+			var array = listCart();
+			console.log("---------------------");
+			console.log(array);
+
+
+		</script>
+		
+		</body>
+</html>
